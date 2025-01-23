@@ -1,0 +1,46 @@
+John Smith
+Senior Software Engineer at TechCorp
+San Francisco Bay Area
+
+About
+Passionate software engineer with 8+ years of experience building scalable web applications and distributed systems. Focused on delivering high-quality code and mentoring junior developers.
+
+Experience
+Senior Software Engineer
+TechCorp | Jan 2022 - Present
+• Led development of microservices architecture serving 1M+ daily users
+• Implemented CI/CD pipelines reducing deployment time by 60%
+• Mentored 5 junior developers and conducted technical interviews
+• Tech stack: Python, Node.js, Docker, Kubernetes, AWS
+
+Software Engineer
+StartupX | Mar 2019 - Dec 2021
+• Developed RESTful APIs using Django and PostgreSQL
+• Implemented real-time analytics dashboard using React and Redux
+• Reduced API response time by 40% through caching optimization
+• Tech stack: Python, Django, JavaScript, React, Redis
+
+Junior Software Engineer
+WebSolutions Inc | Jun 2017 - Feb 2019
+• Built and maintained e-commerce platforms using MEAN stack
+• Implemented payment gateway integrations
+• Tech stack: MongoDB, Express.js, Angular, Node.js
+
+Education
+Bachelor of Science in Computer Science
+University of California, Berkeley
+2013 - 2017
+
+Skills
+• Programming Languages: Python, JavaScript, TypeScript, Java
+• Frontend: React, Angular, Redux, HTML5, CSS3
+• Backend: Node.js, Django, Express.js, FastAPI
+• Databases: PostgreSQL, MongoDB, Redis
+• Cloud & DevOps: AWS, Docker, Kubernetes, Jenkins
+• Tools: Git, JIRA, Confluence
+• Soft Skills: Team Leadership, Mentoring, Agile/Scrum
+
+Certifications
+• AWS Certified Solutions Architect
+• MongoDB Certified Developer
+• Certified Kubernetes Administrator (CKA)

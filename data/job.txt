@@ -1,0 +1,56 @@
+Senior Full Stack Engineer - AI/ML Platform
+TechAI Solutions
+San Francisco, CA (Hybrid)
+
+About the Role:
+We're seeking a Senior Full Stack Engineer to join our AI Platform team. The ideal candidate will have strong experience in both frontend and backend development, with a particular focus on building scalable AI/ML platforms.
+
+Required Skills:
+• 7+ years of software development experience
+• Expert-level Python programming
+• Strong experience with modern JavaScript frameworks (preferably React)
+• Experience with AI/ML frameworks (PyTorch or TensorFlow)
+• Proficient in building and deploying microservices
+• Strong understanding of cloud infrastructure (AWS/GCP)
+• Experience with real-time data processing and streaming
+
+Must-Have Technical Skills:
+• Python, FastAPI or Django
+• React, TypeScript
+• PostgreSQL, Redis
+• Docker, Kubernetes
+• CI/CD pipelines
+• REST APIs and GraphQL
+• AWS/GCP services
+
+Nice-to-Have:
+• Experience with PyTorch or TensorFlow
+• Familiarity with MLOps practices
+• Rust programming language
+• Experience with vector databases
+• Knowledge of LLM fine-tuning
+• Experience with distributed systems
+
+Responsibilities:
+• Design and implement scalable AI model serving infrastructure
+• Build intuitive UIs for ML model management and monitoring
+• Optimize system performance and reliability
+• Collaborate with ML engineers to deploy models efficiently
+• Mentor junior developers and contribute to technical decisions
+
+Requirements:
+• BS/MS in Computer Science or related field
+• 7+ years of professional software development experience
+• Strong problem-solving and analytical skills
+• Excellent communication and collaboration abilities
+• Experience with Agile development methodologies
+
+Benefits:
+• Competitive salary + equity
+• Health, dental, and vision insurance
+• Flexible PTO
+• Remote work options
+• Professional development budget
+• 401(k) matching
+
+Location: San Francisco, CA (Hybrid - 2 days in office)
