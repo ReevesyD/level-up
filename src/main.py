@@ -4,6 +4,7 @@ from .orchestrator import ChainOrchestrator
 import json
 from pathlib import Path
 from datetime import datetime
+from .logger import setup_logger
 
 def analyze_career_path(profile_path: str, job_path: str, output_dir: str) -> None:
     """
@@ -14,29 +15,41 @@ def analyze_career_path(profile_path: str, job_path: str, output_dir: str) -> No
         job_path: Path to the job listing text file
         output_dir: Directory to save output files
     """
+    # Set up logging
+    logger = setup_logger()
+    logger.info("🚀 Starting Career Skills Gap Analysis")
+    
     # Load OpenAI API key from environment
+    logger.info("Loading environment variables...")
     load_dotenv()
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
+        logger.error("❌ OPENAI_API_KEY not found in environment variables")
         raise ValueError("OPENAI_API_KEY not found in environment variables")
     
     # Read input files
     try:
+        logger.info(f"📄 Reading profile from {profile_path}")
         with open(profile_path, 'r') as f:
             profile_text = f.read()
+        logger.info(f"📄 Reading job listing from {job_path}")
         with open(job_path, 'r') as f:
             job_text = f.read()
     except FileNotFoundError as e:
+        logger.error(f"❌ Input file not found: {str(e)}")
         raise ValueError(f"Input file not found: {str(e)}")
     
     # Initialize orchestrator
+    logger.info("🔧 Initializing analysis chain...")
     orchestrator = ChainOrchestrator(api_key)
     
     try:
         # Execute analysis chain
+        logger.info("⚡ Executing analysis chain...")
         results = orchestrator.execute_chain(profile_text, job_text)
         
         # Create output directory if it doesn't exist
+        logger.info(f"📁 Creating output directory: {output_dir}")
         Path(output_dir).mkdir(parents=True, exist_ok=True)
         
         # Generate timestamp for output files
@@ -44,11 +57,13 @@ def analyze_career_path(profile_path: str, job_path: str, output_dir: str) -> No
         
         # Save detailed JSON results
         json_output_path = os.path.join(output_dir, f"analysis_results_{timestamp}.json")
+        logger.info(f"💾 Saving detailed results to {json_output_path}")
         with open(json_output_path, "w") as f:
             json.dump(results, f, indent=2)
         
         # Save human-readable summary
         txt_output_path = os.path.join(output_dir, f"analysis_summary_{timestamp}.txt")
+        logger.info(f"📝 Saving summary to {txt_output_path}")
         with open(txt_output_path, "w") as f:
             f.write("=== Career Path Analysis Results ===\n\n")
             
@@ -75,35 +90,37 @@ def analyze_career_path(profile_path: str, job_path: str, output_dir: str) -> No
                     f.write(f"- {milestone}\n")
         
         # Print results to terminal
-        print("\n=== Career Path Analysis Results ===\n")
+        logger.info("\n=== Career Path Analysis Results ===\n")
         
-        print("Technical Skills Found:")
+        logger.info("Technical Skills Found:")
         for skill in results["profile_analysis"]["technical_skills"]:
-            print(f"- {skill['name']}: {skill['level']} ({skill['years']} years)")
+            logger.info(f"- {skill['name']}: {skill['level']} ({skill['years']} years)")
         
-        print("\nSkill Gaps:")
+        logger.info("\nSkill Gaps:")
         for gap in results["skill_gaps"]["missing_skills"]:
-            print(f"- Missing: {gap['skill']} (Severity: {gap['severity']})")
+            logger.info(f"- Missing: {gap['skill']} (Severity: {gap['severity']})")
         for gap in results["skill_gaps"]["upgrade_needed"]:
-            print(f"- Upgrade Needed: {gap['skill']} "
+            logger.info(f"- Upgrade Needed: {gap['skill']} "
                   f"(Current: {gap['current_level']} → Required: {gap['required_level']})")
         
-        print("\nLearning Path:")
+        logger.info("\nLearning Path:")
         for item in results["learning_path"]["learning_path"]:
-            print(f"\nSkill: {item['skill']}")
-            print(f"Estimated Time: {item['estimated_time']}")
-            print("Resources:")
+            logger.info(f"\nSkill: {item['skill']}")
+            logger.info(f"Estimated Time: {item['estimated_time']}")
+            logger.info("Resources:")
             for resource in item['resources']:
-                print(f"- {resource['name']}: {resource['url']}")
-            print("Milestones:")
+                logger.info(f"- {resource['name']}: {resource['url']}")
+            logger.info("Milestones:")
             for milestone in item['milestones']:
-                print(f"- {milestone}")
+                logger.info(f"- {milestone}")
         
-        print(f"\nDetailed results saved to '{json_output_path}'")
-        print(f"Summary saved to '{txt_output_path}'")
+        logger.info(f"\n✨ Analysis complete!")
+        logger.info(f"📊 Detailed results saved to '{json_output_path}'")
+        logger.info(f"📄 Summary saved to '{txt_output_path}'")
         
     except Exception as e:
-        print(f"Error during analysis: {str(e)}")
+        logger.error(f"❌ Error during analysis: {str(e)}")
+        raise
 
 def main():
     """
