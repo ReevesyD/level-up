@@ -15,7 +15,7 @@ class BaseChain:
     
     def _call_openai(self, prompt: str) -> Dict[str, Any]:
         try:
-            logger.info("🤖 Calling OpenAI API...")
+            logger.info("Calling OpenAI API...")
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
@@ -24,12 +24,12 @@ class BaseChain:
             logger.debug("Received response from OpenAI")
             return json.loads(response.choices[0].message.content)
         except Exception as e:
-            logger.error(f"❌ OpenAI API error: {str(e)}")
+            logger.error(f"OpenAI API error: {str(e)}")
             raise Exception(f"OpenAI API error: {str(e)}")
 
 class ProfileChain(BaseChain):
     def analyze_profile(self, profile_text: str) -> ProfileSkills:
-        logger.info("📊 Analyzing LinkedIn profile...")
+        logger.info("Analyzing LinkedIn profile...")
         prompt = """
         Analyze this LinkedIn profile and extract:
         1. Technical skills with experience level (Beginner/Intermediate/Expert)
@@ -59,15 +59,15 @@ class ProfileChain(BaseChain):
         try:
             result = self._call_openai(prompt.format(profile_text=profile_text))
             skills = ProfileSkills.model_validate(result)
-            logger.info(f"✅ Found {len(skills.technical_skills)} technical skills and {len(skills.soft_skills)} soft skills")
+            logger.info(f"Found {len(skills.technical_skills)} technical skills and {len(skills.soft_skills)} soft skills")
             return skills
         except Exception as e:
-            logger.error(f"❌ Profile analysis error: {str(e)}")
+            logger.error(f"Profile analysis error: {str(e)}")
             raise Exception(f"Profile analysis error: {str(e)}")
 
 class JobChain(BaseChain):
     def analyze_job(self, job_text: str) -> JobRequirements:
-        logger.info("📋 Analyzing job requirements...")
+        logger.info("Analyzing job requirements...")
         prompt = """
         Analyze this job listing and extract:
         1. Required technical skills with minimum level
@@ -93,17 +93,17 @@ class JobChain(BaseChain):
         try:
             result = self._call_openai(prompt.format(job_text=job_text))
             requirements = JobRequirements.model_validate(result)
-            logger.info(f"✅ Found {len(requirements.required_skills)} required skills and {len(requirements.soft_skills)} soft skills")
+            logger.info(f"Found {len(requirements.required_skills)} required skills and {len(requirements.soft_skills)} soft skills")
             return requirements
         except Exception as e:
-            logger.error(f"❌ Job analysis error: {str(e)}")
+            logger.error(f"Job analysis error: {str(e)}")
             raise Exception(f"Job analysis error: {str(e)}")
 
 class GapChain(BaseChain):
     def analyze_gaps(
         self, profile_skills: ProfileSkills, job_requirements: JobRequirements
     ) -> GapAnalysis:
-        logger.info("🔍 Analyzing skill gaps...")
+        logger.info("Analyzing skill gaps...")
         prompt = """
         Compare these profile skills against job requirements and identify:
         1. Missing required skills
@@ -137,15 +137,15 @@ class GapChain(BaseChain):
                 job_requirements_json=job_requirements.model_dump_json()
             ))
             gaps = GapAnalysis.model_validate(result)
-            logger.info(f"✅ Found {len(gaps.missing_skills)} missing skills and {len(gaps.upgrade_needed)} skills needing improvement")
+            logger.info(f"Found {len(gaps.missing_skills)} missing skills and {len(gaps.upgrade_needed)} skills needing improvement")
             return gaps
         except Exception as e:
-            logger.error(f"❌ Gap analysis error: {str(e)}")
+            logger.error(f"Gap analysis error: {str(e)}")
             raise Exception(f"Gap analysis error: {str(e)}")
 
 class LearningChain(BaseChain):
     def generate_path(self, gaps: GapAnalysis) -> LearningPath:
-        logger.info("📚 Generating learning path...")
+        logger.info("Generating learning path...")
         prompt = """
         Create a learning path to address these skill gaps:
         1. Recommended learning resources
@@ -177,8 +177,8 @@ class LearningChain(BaseChain):
         try:
             result = self._call_openai(prompt.format(gaps_json=gaps.model_dump_json()))
             path = LearningPath.model_validate(result)
-            logger.info(f"✅ Generated learning path with {len(path.learning_path)} skills to learn")
+            logger.info(f"Generated learning path with {len(path.learning_path)} skills to learn")
             return path
         except Exception as e:
-            logger.error(f"❌ Learning path generation error: {str(e)}")
+            logger.error(f"Learning path generation error: {str(e)}")
             raise Exception(f"Learning path generation error: {str(e)}")
