@@ -1,29 +1,33 @@
 from openai import OpenAI
-from typing import Dict, Any
+from typing import Dict, Any, TypeVar, Generic
 import json
 from .models import (
     ProfileSkills, JobRequirements, GapAnalysis, LearningPath
 )
 
-class BaseChain:
+T = TypeVar('T')
+
+class BaseAnalyzer(Generic[T]):
     def __init__(self, client: OpenAI):
         self.client = client
-        self.model = "gpt-4o-mini"
+        self.model = "gpt-4-turbo-preview"
     
-    def _call_openai(self, prompt: str) -> Dict[str, Any]:
+    def _call_openai(self, prompt: str, model_class: type[T]) -> T:
+        """Make an OpenAI API call and validate the response with a Pydantic model."""
+        print(f"Calling OpenAI API for {model_class.__name__}...")
         try:
-            print("Calling OpenAI API...")
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
                 response_format={"type": "json_object"}
             )
-            return json.loads(response.choices[0].message.content)
+            result = json.loads(response.choices[0].message.content)
+            return model_class.model_validate(result)
         except Exception as e:
-            print(f"OpenAI API error: {str(e)}")
-            raise Exception(f"OpenAI API error: {str(e)}")
+            print(f"Error in {model_class.__name__}: {str(e)}")
+            raise
 
-class ProfileChain(BaseChain):
+class SkillExtractor(BaseAnalyzer[ProfileSkills]):
     def analyze_profile(self, profile_text: str) -> ProfileSkills:
         print("Analyzing LinkedIn profile...")
         prompt = """
@@ -52,16 +56,11 @@ class ProfileChain(BaseChain):
             ]
         }}
         """
-        try:
-            result = self._call_openai(prompt.format(profile_text=profile_text))
-            skills = ProfileSkills.model_validate(result)
-            print(f"Found {len(skills.technical_skills)} technical skills and {len(skills.soft_skills)} soft skills")
-            return skills
-        except Exception as e:
-            print(f"Profile analysis error: {str(e)}")
-            raise Exception(f"Profile analysis error: {str(e)}")
+        skills = self._call_openai(prompt.format(profile_text=profile_text), ProfileSkills)
+        print(f"Found {len(skills.technical_skills)} technical skills and {len(skills.soft_skills)} soft skills")
+        return skills
 
-class JobChain(BaseChain):
+class RequirementAnalyzer(BaseAnalyzer[JobRequirements]):
     def analyze_job(self, job_text: str) -> JobRequirements:
         print("Analyzing job requirements...")
         prompt = """
@@ -86,16 +85,11 @@ class JobChain(BaseChain):
             "soft_skills": ["skill 1", "skill 2"]
         }}
         """
-        try:
-            result = self._call_openai(prompt.format(job_text=job_text))
-            requirements = JobRequirements.model_validate(result)
-            print(f"Found {len(requirements.required_skills)} required skills and {len(requirements.soft_skills)} soft skills")
-            return requirements
-        except Exception as e:
-            print(f"Job analysis error: {str(e)}")
-            raise Exception(f"Job analysis error: {str(e)}")
+        requirements = self._call_openai(prompt.format(job_text=job_text), JobRequirements)
+        print(f"Found {len(requirements.required_skills)} required skills and {len(requirements.soft_skills)} soft skills")
+        return requirements
 
-class GapChain(BaseChain):
+class SkillGapAnalyzer(BaseAnalyzer[GapAnalysis]):
     def analyze_gaps(
         self, profile_skills: ProfileSkills, job_requirements: JobRequirements
     ) -> GapAnalysis:
@@ -127,19 +121,17 @@ class GapChain(BaseChain):
             ]
         }}
         """
-        try:
-            result = self._call_openai(prompt.format(
+        gaps = self._call_openai(
+            prompt.format(
                 profile_skills_json=profile_skills.model_dump_json(),
                 job_requirements_json=job_requirements.model_dump_json()
-            ))
-            gaps = GapAnalysis.model_validate(result)
-            print(f"Found {len(gaps.missing_skills)} missing skills and {len(gaps.upgrade_needed)} skills needing improvement")
-            return gaps
-        except Exception as e:
-            print(f"Gap analysis error: {str(e)}")
-            raise Exception(f"Gap analysis error: {str(e)}")
+            ),
+            GapAnalysis
+        )
+        print(f"Found {len(gaps.missing_skills)} missing skills and {len(gaps.upgrade_needed)} skills needing improvement")
+        return gaps
 
-class LearningChain(BaseChain):
+class PathwayPlanner(BaseAnalyzer[LearningPath]):
     def generate_path(self, gaps: GapAnalysis) -> LearningPath:
         print("Generating learning path...")
         prompt = """
@@ -170,11 +162,6 @@ class LearningChain(BaseChain):
             ]
         }}
         """
-        try:
-            result = self._call_openai(prompt.format(gaps_json=gaps.model_dump_json()))
-            path = LearningPath.model_validate(result)
-            print(f"Generated learning path with {len(path.learning_path)} skills to learn")
-            return path
-        except Exception as e:
-            print(f"Learning path generation error: {str(e)}")
-            raise Exception(f"Learning path generation error: {str(e)}")
+        path = self._call_openai(prompt.format(gaps_json=gaps.model_dump_json()), LearningPath)
+        print(f"Generated learning path with {len(path.learning_path)} skills to learn")
+        return path
