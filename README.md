@@ -1,6 +1,13 @@
 # Career Skills Gap Analyser
 
-A Python-based system that uses OpenAI's GPT-4 to analyse the gap between your current skills (from LinkedIn profile) and job requirements, then generates a personalised learning path.
+A Python-based system that uses OpenAI's GPT-4 to analyse the gap between your current skills and job requirements, then generates a personalised learning path. 
+
+Utilises:
+- Multi-threaded processing of LLM calls
+- AI Agent Chaining
+- AI Prompt Engineering
+- Pydantic for Data Validation and Type Checking
+
 
 ## Features
 
@@ -43,7 +50,7 @@ python3 -m src.main
 ```
 
 2. When prompted:
-   - Paste your LinkedIn profile text
+   - Paste your resume / linkedin profile text
    - Paste the job listing text
 
 3. The system will analyse the inputs and provide:
