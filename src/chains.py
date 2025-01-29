@@ -10,7 +10,7 @@ T = TypeVar('T')
 class BaseAnalyzer(Generic[T]):
     def __init__(self, client: OpenAI):
         self.client = client
-        self.model = "gpt-4-turbo-preview"
+        self.model = "gpt-4o-mini"
     
     def _call_openai(self, prompt: str, model_class: type[T]) -> T:
         """Make an OpenAI API call and validate the response with a Pydantic model."""
