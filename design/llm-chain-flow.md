@@ -96,19 +96,13 @@ Return in JSON format:
 ## Chain Flow Sequence
 
 ```mermaid
-sequenceDiagram
-    participant U as User
-    participant C1 as Profile Chain
-    participant C2 as Job Chain
-    participant C3 as Gap Chain
-    participant C4 as Learning Chain
-    
-    U->>C1: LinkedIn Profile
-    C1->>C2: Profile Skills JSON
-    U->>C2: Job Listing
-    C2->>C3: Requirements JSON
-    C3->>C4: Gaps JSON
-    C4->>U: Learning Path
+graph TD
+    A[Input Handler] --> B[Profile LLM Chain]
+    A --> C[Job LLM Chain]
+    B --> D[Gap Analysis LLM Chain]
+    C --> D
+    D --> E[Learning Path LLM Chain]
+    E --> F[Output Handler]
 ```
 
 ## Chain Dependencies
